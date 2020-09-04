@@ -1,0 +1,27 @@
+---
+- hosts: new_odroid
+  vars_files:
+    - odroid_config.yml
+  vars: 
+    ansible_facts_mac_address: '{{ ansible_facts["eth0"]["macaddress"] }}'
+
+  tasks:
+
+    - debug: var=ansible_facts.hostname
+    - name: Create the file, if it doesnt exist already
+      file:
+          path: /etc/default/cpufrequtils
+          state: touch
+
+    - name: Set governor to ondemand
+      lineinfile:
+        path: /etc/default/cpufrequtils
+        regexp: '^GOVERNOR=.*$'
+        line: 'GOVERNOR="ondemand"'
+        backrefs: yes
+
+    - name: Restart cpufrequtils
+      systemd:
+        state: restarted
+        daemon_reload: yes
+        name: cpufrequtils

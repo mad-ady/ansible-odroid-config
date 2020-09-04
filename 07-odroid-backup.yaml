@@ -1,0 +1,44 @@
+---
+- hosts: new_odroid
+  vars_files:
+    - odroid_config.yml
+  vars: 
+    ansible_facts_mac_address: '{{ ansible_facts["eth0"]["macaddress"] }}'
+
+  tasks:
+    - name: Download odroid-backup
+      get_url:
+        url: https://raw.githubusercontent.com/mad-ady/odroid-backup/master/odroid-backup.pl
+        dest: /usr/local/bin/odroid-backup
+        mode: '0775'
+
+    - name: Install cpanm
+      apt:
+          name: cpanminus
+          state: present
+          
+    - name: Install UI::Dialog
+      cpanm:
+        name: UI::Dialog
+    - name: Install Number::Bytes::Human
+      cpanm: 
+        name: Number::Bytes::Human
+    
+    - name: Install JSON
+      cpanm: 
+        name: JSON
+    
+    - name: Install partclone
+      apt:
+          name: partclone
+          state: present
+
+    - name: Install fsarchiver
+      apt:
+          name: fsarchiver
+          state: present
+
+    - name: Install mtd-utils
+      apt:
+          name: mtd-utils
+          state: present

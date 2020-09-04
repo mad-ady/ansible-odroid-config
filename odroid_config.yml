@@ -1,0 +1,8 @@
+new_odroid:
+  odroid:
+    hostname: my-odroid
+    #generate password hashes with mkpasswd --method=sha-512
+    adrianp: xxx
+    root: xxx
+    # x11vnc takes a clear-text password
+    x11vnc: xxx

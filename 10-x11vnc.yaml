@@ -1,0 +1,42 @@
+---
+- hosts: new_odroid
+  vars_files:
+    - odroid_config.yml
+  vars: 
+    ansible_facts_mac_address: '{{ ansible_facts["eth0"]["macaddress"] }}'
+  tasks:
+  - name: install x11vnc
+    apt:
+        
+        name: x11vnc # not required. A list of package names, like C(foo), or package specifier with version, like C(foo=1.0). Name wildcards (fnmatch) like C(apt*) and version wildcards like C(foo=1.0*) are also supported.
+        state: present # not required. choices: absent;build-dep;latest;present. Indicates the desired package state. C(latest) ensures that the latest version is installed. C(build-dep) ensures the package build dependencies are installed.
+  
+  - name: create x11vnc systemd startup
+    blockinfile:
+        path: /etc/systemd/system/x11vnc.service # required. The file to modify.,Before 2.3 this option was only usable as I(dest), I(destfile) and I(name).
+        
+        create: yes # not required. Create a new file if it doesn't exist.
+        
+        state: present # not required. choices: absent;present. Whether the block should be there or not.
+        block: |
+          [Unit]
+          Description=VNC Server for X11
+          #Requires=display-manager.service
+          #After=display-manager.service
+          After=graphical.target
+
+          [Service]
+          Type=forking
+          ExecStart=/usr/bin/x11vnc -forever -bg -geometry 1280x720 -usepw -shared -noprimary \
+            -auth /var/run/lightdm/root/:0 -display :0 -rfbauth /etc/x11vnc.pass
+  
+  - name: Set x11vnc password
+    
+    shell: |
+      x11vnc -storepasswd '{{ new_odroid["odroid"]["x11vnc"] }}' /etc/x11vnc.pass
+
+  - name: Restart x11vnc
+    systemd:
+      name: x11vnc
+      state: restarted
+        

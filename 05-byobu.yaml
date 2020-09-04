@@ -1,0 +1,34 @@
+---
+- hosts: new_odroid
+  vars_files:
+    - odroid_config.yml
+  vars: 
+    ansible_facts_mac_address: '{{ ansible_facts["eth0"]["macaddress"] }}'
+
+  tasks:
+
+    - debug: var=ansible_facts.hostname
+
+    - name: mkdir .byobu
+      file:
+        path: /home/adrianp/.byobu
+        state: directory
+        mode: '0755'
+        owner: adrianp
+        group: adrianp
+    
+    - name: Copy custom byobu plugins from git (adrianp)
+      git:
+        repo: https://github.com/mad-ady/odroid-byobu.git
+        dest: /home/adrianp/.byobu/bin
+
+    - name: mkdir /root/.byobu
+      file:
+        path: /root/.byobu
+        state: directory
+        mode: '0755'
+    
+    - name: Copy custom byobu plugins from git (root)
+      git:
+        repo: https://github.com/mad-ady/odroid-byobu.git
+        dest: /root/.byobu/bin

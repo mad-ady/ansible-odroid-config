@@ -1,0 +1,60 @@
+---
+- hosts: new_odroid
+  vars_files:
+    - odroid_config.yml
+  vars: 
+    ansible_facts_mac_address: '{{ ansible_facts["eth0"]["macaddress"] }}'
+
+  tasks:
+    - debug: var=ansible_facts_mac_address
+    - debug: var=ansible_facts.hostname
+    - name: Ensure group "adrianp" exists
+      group:
+        name: adrianp
+        state: present
+
+    - name: Add group bluetooth
+      group:
+        name: bluetooth
+        state: present
+
+    - name: Add group nopasswdlogin
+      group:
+        name: nopasswdlogin
+        state: present
+
+    - name: Add the user 'adrianp' with a bash shell, appending groups
+      user:
+        name: adrianp
+        shell: /bin/bash
+        create_home: yes
+        generate_ssh_key: yes
+        group: adrianp
+        uid: 1001
+        password: '{{ new_odroid["odroid"]["adrianp"] }}'
+        groups: root,adm,disk,dialout,cdrom,sudo,audio,dip,video,bluetooth,lightdm,nopasswdlogin,pulse,pulse-access
+        append: yes
+    
+    - name: Change root password
+      user:
+        name: root
+        password: '{{ new_odroid["odroid"]["root"] }}'
+
+    - name: Set up multiple authorized keys for adrianp
+      authorized_key:
+        user: adrianp
+        state: present
+        key: '{{ item }}'
+      with_file:
+        - /home/adrianp/.ssh/id_rsa.pub
+        - /home/adrianp/.ssh/id_rsa_frost.pub
+    
+    - name: Set up multiple authorized keys for root
+      authorized_key:
+        user: root
+        state: present
+        key: '{{ item }}'
+      with_file:
+        - /home/adrianp/.ssh/id_rsa.pub
+        - /home/adrianp/.ssh/id_rsa_frost.pub
+    

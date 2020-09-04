@@ -1,0 +1,14 @@
+---
+- hosts: new_odroid
+  vars_files:
+    - odroid_config.yml
+  vars: 
+    ansible_facts_mac_address: '{{ ansible_facts["eth0"]["macaddress"] }}'
+
+  tasks:
+    - name: Download odroid-cpu-control
+      get_url:
+        url: https://raw.githubusercontent.com/mad-ady/odroid-cpu-control/master/odroid-cpu-control
+        dest: /usr/local/bin/odroid-cpu-control
+        mode: '0775'
+    

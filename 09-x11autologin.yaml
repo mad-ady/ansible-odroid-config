@@ -1,0 +1,36 @@
+---
+- hosts: new_odroid
+  vars_files:
+    - odroid_config.yml
+  vars: 
+    ansible_facts_mac_address: '{{ ansible_facts["eth0"]["macaddress"] }}'
+  tasks:
+  - name: lightdm autologin adrianp
+    blockinfile:
+        path: /etc/lightdm/lightdm.conf.d/autologin.conf # required. The file to modify.,Before 2.3 this option was only usable as I(dest), I(destfile) and I(name).
+        group: root # not required. Name of the group that should own the file/directory, as would be fed to I(chown).
+        
+        create: yes # not required. Create a new file if it doesn't exist.
+        
+        owner: root # not required. Name of the user that should own the file/directory, as would be fed to I(chown).
+        
+        state: present # not required. choices: absent;present. Whether the block should be there or not.
+        block: |
+          [SeatDefaults]
+          autologin-user=adrianp
+          autologin-user-timeout=5
+          #user-session=ubuntu
+          # Uncomment the following, if running Unity
+          #greeter-session=unity-greeter
+        
+        insertafter: EOF # not required. choices: EOF;*regex*. If specified, the block will be inserted after the last match of specified regular expression. A special value is available; C(EOF) for inserting the block at the end of the file.  If specified regular expression has no matches, C(EOF) will be used instead.
+        
+        marker_begin: BEGIN # not required. This will be inserted at {mark} in the opening ansible block marker.
+        marker_end: END # not required. This will be inserted at {mark} in the closing ansible block marker.
+  - name: restart lightdm
+    systemd:
+        name: lightdm # not required. Name of the service. When using in a chroot environment you always need to specify the full name i.e. (crond.service).
+        enabled: yes # not required. Whether the service should start on boot. B(At least one of state and enabled are required.)
+        daemon_reload: no # not required. run daemon-reload before doing any other operations, to make sure systemd has read any changes.
+        state: restarted # not required. choices: reloaded;restarted;started;stopped. C(started)/C(stopped) are idempotent actions that will not run commands unless necessary. C(restarted) will always bounce the service. C(reloaded) will always reload.
+        
