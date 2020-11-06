@@ -9,9 +9,11 @@
     - debug: var=ansible_facts_mac_address
     - debug: var=ansible_facts.hostname
     - name: Set timezone to Bucharest
+      become: yes
       timezone:
         name: Europe/Bucharest
     - name: Run locale-gen en_US.UTF-8
+      become: yes
       shell: locale-gen en_US.UTF-8
 
 

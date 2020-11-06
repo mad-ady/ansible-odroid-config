@@ -7,38 +7,46 @@
 
   tasks:
     - name: Download odroid-backup
+      become: yes
       get_url:
         url: https://raw.githubusercontent.com/mad-ady/odroid-backup/master/odroid-backup.pl
         dest: /usr/local/bin/odroid-backup
         mode: '0775'
 
     - name: Install cpanm
+      become: yes
       apt:
           name: cpanminus
           state: present
           
     - name: Install UI::Dialog
+      become: yes
       cpanm:
         name: UI::Dialog
     - name: Install Number::Bytes::Human
+      become: yes
       cpanm: 
         name: Number::Bytes::Human
     
     - name: Install JSON
+      become: yes
       cpanm: 
         name: JSON
     
     - name: Install partclone
+      become: yes
       apt:
           name: partclone
           state: present
 
     - name: Install fsarchiver
+      become: yes
       apt:
           name: fsarchiver
           state: present
 
     - name: Install mtd-utils
+      become: yes
       apt:
           name: mtd-utils
           state: present

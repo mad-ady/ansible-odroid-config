@@ -6,6 +6,7 @@
     ansible_facts_mac_address: '{{ ansible_facts["eth0"]["macaddress"] }}'
   tasks:
   - name: install x11vnc
+    become: yes
     apt:
         
         name: x11vnc # not required. A list of package names, like C(foo), or package specifier with version, like C(foo=1.0). Name wildcards (fnmatch) like C(apt*) and version wildcards like C(foo=1.0*) are also supported.
@@ -31,11 +32,13 @@
             -auth /var/run/lightdm/root/:0 -display :0 -rfbauth /etc/x11vnc.pass
   
   - name: Set x11vnc password
+    become: yes
     
     shell: |
       x11vnc -storepasswd '{{ new_odroid["odroid"]["x11vnc"] }}' /etc/x11vnc.pass
 
   - name: Restart x11vnc
+    become: yes
     systemd:
       name: x11vnc
       state: restarted

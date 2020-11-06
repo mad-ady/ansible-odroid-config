@@ -10,9 +10,11 @@
     - debug: var=ansible_facts.hostname
     
     - name: Run fstrim /
+      become: yes
       shell: fstrim -v /
 
     - name: Enable fstrim once a week
+      become: yes
       systemd:
         name: fstrim.timer
         enabled: yes

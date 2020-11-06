@@ -10,63 +10,79 @@
     - debug: var=ansible_facts.hostname
 
     - name: Run the equivalent of "apt-get update" as a separate step
+      become: yes
       apt:
         update_cache: yes
     
     - name: Update all packages to the latest version
+      become: yes
       apt:
         upgrade: dist
 
     - name: Install python2
+      become: yes
       apt:
         name: python
 
     - name: Install git
+      become: yes
       apt:
         name: git
     
     - name: Install byobu
+      become: yes
       apt:
         name: byobu
 
     - name: Install tcpdump
+      become: yes
       apt:
         name: tcpdump
 
     - name: Install mc
+      become: yes
       apt:
         name: mc
 
     - name: Install vim
+      become: yes
       apt:
         name: vim
     - name: Install locales
+      become: yes
       apt:
         name: locales
 
 
     - name: Install net-tools
+      become: yes
       apt:
         name: net-tools
 
     - name: Install htop
+      become: yes
       apt:
         name: htop
     - name: Install fake-hwclock
+      become: yes
       apt:
         name: fake-hwclock
 
     - name: Install mosh
+      become: yes
       apt:
         name: mosh
 
     - name: Install cpufrequtils
+      become: yes
       apt:
         name: cpufrequtils
     - name: Install nfs-kernel-server
+      become: yes
       apt:
         name: nfs-kernel-server
 
     - name: Install rpcbind
+      become: yes
       apt:
         name: rpcbind

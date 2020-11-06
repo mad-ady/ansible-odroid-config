@@ -6,6 +6,7 @@
     ansible_facts_mac_address: '{{ ansible_facts["eth0"]["macaddress"] }}'
   tasks:
   - name: lightdm autologin adrianp
+    become: yes
     blockinfile:
         path: /etc/lightdm/lightdm.conf.d/autologin.conf # required. The file to modify.,Before 2.3 this option was only usable as I(dest), I(destfile) and I(name).
         group: root # not required. Name of the group that should own the file/directory, as would be fed to I(chown).
@@ -28,6 +29,7 @@
         marker_begin: BEGIN # not required. This will be inserted at {mark} in the opening ansible block marker.
         marker_end: END # not required. This will be inserted at {mark} in the closing ansible block marker.
   - name: restart lightdm
+    become: yes
     systemd:
         name: lightdm # not required. Name of the service. When using in a chroot environment you always need to specify the full name i.e. (crond.service).
         enabled: yes # not required. Whether the service should start on boot. B(At least one of state and enabled are required.)

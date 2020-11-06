@@ -7,6 +7,7 @@
 
   tasks:
     - name: Download odroid-cpu-control
+      become: yes
       get_url:
         url: https://raw.githubusercontent.com/mad-ady/odroid-cpu-control/master/odroid-cpu-control
         dest: /usr/local/bin/odroid-cpu-control

@@ -1,4 +1,4 @@
 [new_odroid]
-#192.168.1.14  ansible_user=root ansible_python_interpreter=/usr/bin/python3
-192.168.1.14  ansible_user=root 
+192.168.1.173  ansible_user=odroid ansible_python_interpreter=/usr/bin/python3 ansible_become_pass=odroid
+#192.168.1.14  ansible_user=root 
 

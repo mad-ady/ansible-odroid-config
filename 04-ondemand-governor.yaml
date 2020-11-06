@@ -9,11 +9,13 @@
 
     - debug: var=ansible_facts.hostname
     - name: Create the file, if it doesnt exist already
+      become: yes
       file:
           path: /etc/default/cpufrequtils
           state: touch
 
     - name: Set governor to ondemand
+      become: yes
       lineinfile:
         path: /etc/default/cpufrequtils
         regexp: '^GOVERNOR=.*$'
@@ -21,6 +23,7 @@
         backrefs: yes
 
     - name: Restart cpufrequtils
+      become: yes
       systemd:
         state: restarted
         daemon_reload: yes

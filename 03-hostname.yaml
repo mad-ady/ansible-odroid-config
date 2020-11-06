@@ -8,10 +8,13 @@
   tasks:
     - debug: var=new_odroid["odroid"]["hostname"]
     - debug: var=ansible_facts.hostname
-    - hostname:
+    - name: Changing hostname
+      become: yes
+      hostname:
         name: '{{ new_odroid["odroid"]["hostname"] }}'
 
     - name: Update /etc/hosts
+      become: yes
       blockinfile:
           path: /etc/hosts
           create: yes

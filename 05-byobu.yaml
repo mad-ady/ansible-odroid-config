@@ -10,6 +10,7 @@
     - debug: var=ansible_facts.hostname
 
     - name: mkdir .byobu
+      become: yes
       file:
         path: /home/adrianp/.byobu
         state: directory
@@ -18,17 +19,20 @@
         group: adrianp
     
     - name: Copy custom byobu plugins from git (adrianp)
+      become: yes
       git:
         repo: https://github.com/mad-ady/odroid-byobu.git
         dest: /home/adrianp/.byobu/bin
 
     - name: mkdir /root/.byobu
+      become: yes
       file:
         path: /root/.byobu
         state: directory
         mode: '0755'
     
     - name: Copy custom byobu plugins from git (root)
+      become: yes
       git:
         repo: https://github.com/mad-ady/odroid-byobu.git
         dest: /root/.byobu/bin

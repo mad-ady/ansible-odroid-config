@@ -9,21 +9,43 @@
     - debug: var=ansible_facts_mac_address
     - debug: var=ansible_facts.hostname
     - name: Ensure group "adrianp" exists
+      become: yes
       group:
         name: adrianp
         state: present
 
     - name: Add group bluetooth
+      become: yes
       group:
         name: bluetooth
         state: present
+    
+    - name: Add group pulse
+      become: yes
+      group:
+        name: pulse
+        state: present
+    
+    - name: Add group pulse-access
+      become: yes
+      group:
+        name: pulse-access
+        state: present
+
+    - name: Add group lightdm
+      become: yes
+      group:
+        name: lightdm
+        state: present
 
     - name: Add group nopasswdlogin
+      become: yes
       group:
         name: nopasswdlogin
         state: present
 
     - name: Add the user 'adrianp' with a bash shell, appending groups
+      become: yes
       user:
         name: adrianp
         shell: /bin/bash
@@ -36,11 +58,13 @@
         append: yes
     
     - name: Change root password
+      become: yes
       user:
         name: root
         password: '{{ new_odroid["odroid"]["root"] }}'
 
     - name: Set up multiple authorized keys for adrianp
+      become: yes
       authorized_key:
         user: adrianp
         state: present
@@ -48,8 +72,10 @@
       with_file:
         - /home/adrianp/.ssh/id_rsa.pub
         - /home/adrianp/.ssh/id_rsa_frost.pub
+        - /home/adrianp/.ssh/id_rsa_2020.pub
     
     - name: Set up multiple authorized keys for root
+      become: yes
       authorized_key:
         user: root
         state: present
@@ -57,4 +83,6 @@
       with_file:
         - /home/adrianp/.ssh/id_rsa.pub
         - /home/adrianp/.ssh/id_rsa_frost.pub
+        - /home/adrianp/.ssh/id_rsa_2020.pub
+
     
