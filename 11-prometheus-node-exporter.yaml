@@ -1,0 +1,35 @@
+# depends on ansible-galaxy install undergreen.prometheus-node-exporter
+- hosts: new_odroid
+  vars_files:
+    - odroid_config.yml
+  vars:
+    arch_map:
+      i386: '386'
+      x86_64: 'amd64'
+      aarch64: 'arm64'
+      armv7l: 'armv7'
+      armv6l: 'armv6'
+    os_arch: "{{ arch_map[ansible_architecture] | default(ansible_architecture) }}"
+  roles:
+    - role: undergreen.prometheus-node-exporter
+      prometheus_node_exporter_version: 0.18.1
+      prometheus_node_exporter_release_name: "node_exporter-{{ prometheus_node_exporter_version }}.linux-{{ os_arch }}"
+      prometheus_node_exporter_enabled_collectors:
+        - conntrack
+        - cpu
+        - diskstats
+        - entropy
+        - filefd
+        - filesystem
+        - loadavg
+        - mdadm
+        - meminfo
+        - netdev
+        - netstat
+        - stat
+        - textfile
+        - time
+        - vmstat
+      prometheus_node_exporter_config_flags:
+        'web.listen-address': '0.0.0.0:9100'
+        'log.level': 'info'
