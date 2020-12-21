@@ -1,0 +1,79 @@
+- hosts: new_odroid
+  vars_files:
+    - odroid_config.yml
+  vars:
+    color_map:
+      '0': 'MyOrange'
+      '1': 'MyLightGrey'
+      '2': 'MyBlue'
+      '3': 'MyLime'
+      '4': 'MyDarkGreen'
+      '5': 'MyDarkTeal'
+      '6': 'MyDarkRed'
+      '7': 'MyLightBlue'
+    ansible_facts_mac_address: '{{ ansible_facts["eth0"]["macaddress"] }}'
+  tasks:
+  - name: install pureline to /usr/local/
+    become: true
+    git:
+      repo: 'https://github.com/chris-marsh/pureline.git'
+      dest: /usr/local/pureline
+  - name: copy pureline.conf to ~adrianp
+    become: true
+    copy:
+      src: files/pureline.conf
+      dest: /home/adrianp/.pureline.conf
+      owner: adrianp
+      group: adrianp
+      mode: '0644'
+  - name: get a hex string from the hostname
+    shell: echo "{{ansible_hostname}}" | md5sum | cut -c 1-4
+    register: hostname_hex
+    changed_when: false
+  - debug:
+      var: hostname_hex # not required. A variable name to debug.  Mutually exclusive with the 'msg' option.
+      verbosity: 0 # not required. A number that controls when the debug is run, if you set to 3 it will only run debug when -vvv or above
+  - debug:
+      msg: "{{hostname_hex.stdout_lines[0]}}"
+  - name: get a pseudo-random number for this host to select a ssh color
+    set_fact:
+      color_index: "{{hostname_hex.stdout_lines[0] | int(hostname_hex.stdout_lines[0],16) % 8 }}"
+  - debug:
+      var: color_index
+  - debug: 
+      msg: "selected index {{ color_index }} -> {{ color_map[color_index] }} for {{ansible_hostname}}"
+  - name: replace the ssh color in .pureline.conf
+    become: true
+    lineinfile:
+        path: /home/adrianp/.pureline.conf # required. The file to modify.,Before 2.3 this option was only usable as I(dest), I(destfile) and I(name).
+        regexp: 'ssh_module\s+([^\s]+)\s+Black'
+        line: "     'ssh_module      {{color_map[color_index]}}    Black' "
+
+  - name: copy the customized pureline.conf to ~root
+    become: true
+    copy:
+      src: /home/adrianp/.pureline.conf
+      dest: /root/.pureline.conf
+      owner: root
+      group: root
+      mode: '0644'
+
+  - name: enable pureline in bashrc (adrianp)
+    become: true
+    blockinfile:
+      dest: /home/adrianp/.bashrc
+      block: |
+        # Enable pureline prompt for interactive shells
+        if [ "$TERM" != "linux" ]; then
+          source /usr/local/pureline/pureline ~/.pureline.conf
+        fi
+
+  - name: enable pureline in bashrc (root)
+    become: true
+    blockinfile:
+      dest: /root/.bashrc
+      block: |
+        # Enable pureline prompt for interactive shells
+        if [ "$TERM" != "linux" ]; then
+          source /usr/local/pureline/pureline ~/.pureline.conf
+        fi
