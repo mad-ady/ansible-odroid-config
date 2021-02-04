@@ -77,3 +77,7 @@
         if [ "$TERM" != "linux" ]; then
           source /usr/local/pureline/pureline ~/.pureline.conf
         fi
+  - name: pureline-fonts
+    become: true
+    apt:
+      name: pureline-fonts
