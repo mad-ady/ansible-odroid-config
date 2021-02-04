@@ -44,6 +44,30 @@
         name: nopasswdlogin
         state: present
 
+    - name: Add group dip
+      become: yes
+      group:
+        name: dip
+        state: present
+
+    - name: Add group dialout
+      become: yes
+      group:
+        name: dialout
+        state: present
+
+    - name: Add group sudo
+      become: yes
+      group:
+        name: sudo
+        state: present
+
+    - name: Add group cdrom
+      become: yes
+      group:
+        name: cdrom
+        state: present
+
     - name: Add the user 'adrianp' with a bash shell, appending groups
       become: yes
       user:
