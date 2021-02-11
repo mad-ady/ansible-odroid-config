@@ -11,6 +11,77 @@
       armv7l: 'armv7'
       armv6l: 'armv6'
     os_arch: "{{ arch_map[ansible_architecture] | default(ansible_architecture) }}"
+  tasks:
+    - name: Create '/var/log/prometheus'
+      become: true
+      ansible.builtin.file:
+        path: /var/log/prometheus
+        state: directory
+        mode: '0777'
+
+    - name: Install moreutils
+      become: true
+      apt:
+         name: moreutils
+      when: ansible_distribution == 'Ubuntu' or ansible_distribution == "Debian"
+
+    - name: Download https://raw.githubusercontent.com/prometheus-community/node-exporter-textfile-collector-scripts/master/apt.sh
+      become: true
+      get_url:
+        url: https://raw.githubusercontent.com/prometheus-community/node-exporter-textfile-collector-scripts/master/apt.sh
+        dest: /usr/local/bin/apt-prometheus.sh
+        mode: '0755'
+      when: ansible_distribution == 'Ubuntu' or ansible_distribution == "Debian"
+
+    - name: Export apt status via cron to prometheus
+      become: true
+      ansible.builtin.cron:
+        name: "check apt status"
+        minute: "0"
+        hour: "*/4"
+        job: "/usr/local/bin/apt-prometheus.sh 2>/dev/null | sponge /var/log/prometheus/apt-prometheus.prom"
+      when: ansible_distribution == 'Ubuntu' or ansible_distribution == "Debian"
+    
+    - name: Install mmc-utils
+      become: true
+      apt:
+         name: mmc-utils
+      when: ansible_distribution == 'Ubuntu' or ansible_distribution == "Debian"
+
+    - name: Script to probe mmc health
+      become: true
+      copy:
+        src: files/emmc-status-prometheus.sh
+        dest: /usr/local/bin/emmc-status-prometheus.sh
+        owner: root
+        group: root
+        mode: '0755'
+
+    - name: Export emmc status via cron to prometheus
+      become: true
+      ansible.builtin.cron:
+        name: "check emmc status"
+        minute: "0"
+        hour: "0"
+        job: "/usr/local/bin/emmc-status-prometheus.sh 2>/dev/null | sponge /var/log/prometheus/emmc-status.prom"
+          
+    - name: Export number of lines in log to prometheus
+      become: true
+      copy:
+        src: files/log-counter-prometheus.sh
+        dest: /usr/local/bin/log-counter-prometheus.sh
+        owner: root
+        group: root
+        mode: '0755'
+
+    - name: Export log status via cron to prometheus
+      become: true
+      ansible.builtin.cron:
+        name: "check log status"
+        minute: "*/5"
+        job: "/usr/local/bin/log-counter-prometheus.sh 2>/dev/null | sponge /var/log/prometheus/log-status.prom"
+          
+
   roles:
     - role: undergreen.prometheus-node-exporter
       prometheus_node_exporter_version: 1.0.1
@@ -34,3 +105,4 @@
       prometheus_node_exporter_config_flags:
         'web.listen-address': '0.0.0.0:9100'
         'log.level': 'info'
+        'collector.textfile.directory': '/var/log/prometheus'
