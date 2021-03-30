@@ -13,10 +13,16 @@
       '7': 'MyLightBlue'
     ansible_facts_mac_address: '{{ ansible_facts["eth0"]["macaddress"] }}'
   tasks:
+  - name: Delete /usr/local/pureline just to be sure
+    become: true
+    ansible.builtin.file:
+      path: /usr/local/pureline
+      state: absent
   - name: install pureline to /usr/local/
     become: true
     git:
       repo: 'https://github.com/chris-marsh/pureline.git'
+      force: yes
       dest: /usr/local/pureline
   - name: copy pureline.conf to ~adrianp
     become: true
@@ -46,8 +52,8 @@
     become: true
     lineinfile:
         path: /home/adrianp/.pureline.conf # required. The file to modify.,Before 2.3 this option was only usable as I(dest), I(destfile) and I(name).
-        regexp: 'ssh_module\s+([^\s]+)\s+Black'
-        line: "     'ssh_module      {{color_map[color_index]}}    Black' "
+        regexp: 'ssh_segment\s+([^\s]+)\s+Black'
+        line: "     'ssh_segment      {{color_map[color_index]}}    Black' "
 
   - name: copy the customized pureline.conf to ~root
     become: true
@@ -77,7 +83,7 @@
         if [ "$TERM" != "linux" ]; then
           source /usr/local/pureline/pureline ~/.pureline.conf
         fi
-  - name: pureline-fonts
-    become: true
-    apt:
-      name: pureline-fonts
+#  - name: pureline-fonts
+#    become: true
+#    apt:
+#      name: pureline-fonts
