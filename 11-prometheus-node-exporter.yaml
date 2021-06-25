@@ -1,8 +1,7 @@
+# ansible-playbook -i hosts 11-prometheus-node-exporter.yaml --extra-vars="hosts=xxx"
 # depends on ansible-galaxy install undergreen.prometheus-node-exporter
-- hosts: new_odroid
+- hosts: '{{ hosts }}'
   become: true
-  vars_files:
-    - odroid_config.yml
   vars:
     arch_map:
       i386: '386'

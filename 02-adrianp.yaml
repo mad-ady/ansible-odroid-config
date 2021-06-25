@@ -1,7 +1,6 @@
+# ansible-playbook -i hosts 02-adrianp.yaml --extra-vars="hosts=xxx"
 ---
-- hosts: new_odroid
-  vars_files:
-    - odroid_config.yml
+- hosts: '{{ hosts }}'
   vars: 
     ansible_facts_mac_address: '{{ ansible_facts["eth0"]["macaddress"] }}'
 
@@ -77,7 +76,7 @@
         generate_ssh_key: yes
         group: adrianp
         uid: 1001
-        password: '{{ new_odroid["odroid"]["adrianp"] }}'
+        password: '{{ users_to_create["adrianp"] }}'
         groups: root,adm,disk,dialout,cdrom,sudo,audio,dip,video,bluetooth,lightdm,nopasswdlogin,pulse,pulse-access
         append: yes
     
@@ -85,7 +84,7 @@
       become: yes
       user:
         name: root
-        password: '{{ new_odroid["odroid"]["root"] }}'
+        password: '{{ users_to_create["root"] }}'
 
     - name: Set up multiple authorized keys for adrianp
       become: yes

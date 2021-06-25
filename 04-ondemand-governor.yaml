@@ -1,7 +1,6 @@
+# ansible-playbook -i hosts 04-ondemand-governor.yaml --extra-vars="hosts=xxx"
 ---
-- hosts: new_odroid
-  vars_files:
-    - odroid_config.yml
+- hosts: '{{ hosts }}'
   vars: 
     ansible_facts_mac_address: '{{ ansible_facts["eth0"]["macaddress"] }}'
 

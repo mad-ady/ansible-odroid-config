@@ -1,17 +1,17 @@
+# ansible-playbook -i hosts 03-hostname.yaml --extra-vars="hosts=xxx"
 ---
-- hosts: new_odroid
-  vars_files:
-    - odroid_config.yml
+- hosts: '{{ hosts }}'
+
   vars: 
     ansible_facts_mac_address: '{{ ansible_facts["eth0"]["macaddress"] }}'
 
   tasks:
-    - debug: var=new_odroid["odroid"]["hostname"]
+    - debug: var={{inventory_hostname}}
     - debug: var=ansible_facts.hostname
     - name: Changing hostname
       become: yes
       hostname:
-        name: '{{ new_odroid["odroid"]["hostname"] }}'
+        name: '{{inventory_hostname}}'
 
     - name: Update /etc/hosts
       become: yes
@@ -19,7 +19,7 @@
           path: /etc/hosts
           create: yes
           block: |
-            127.0.0.1 localhost {{ new_odroid["odroid"]["hostname"] }}
+            127.0.0.1 localhost {{inventory_hostname}}
 
             # The following lines are desirable for IPv6 capable hosts
             ::1 ip6-localhost ip6-loopback

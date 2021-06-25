@@ -1,7 +1,6 @@
+# ansible-playbook -i hosts 10-x11vnc.yaml --extra-vars="hosts=xxx"
 ---
-- hosts: new_odroid
-  vars_files:
-    - odroid_config.yml
+- hosts: '{{ hosts }}'
   vars: 
     ansible_facts_mac_address: '{{ ansible_facts["eth0"]["macaddress"] }}'
   tasks:
@@ -35,7 +34,7 @@
     become: yes
     
     shell: |
-      x11vnc -storepasswd '{{ new_odroid["odroid"]["x11vnc"] }}' /etc/x11vnc.pass
+      x11vnc -storepasswd '{{x11vnc_password}}' /etc/x11vnc.pass
 
   - name: Restart x11vnc
     become: yes

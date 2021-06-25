@@ -1,6 +1,4 @@
-- hosts: new_odroid
-  vars_files:
-    - odroid_config.yml
+- hosts: '{{ hosts }}'
   vars:
     color_map:
       '0': 'MyOrange'
