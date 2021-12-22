@@ -1,3 +1,4 @@
+# ansible-playbook -i hosts 12-pureline.yaml --extra-vars="hosts=xxx"
 - hosts: '{{ hosts }}'
   vars:
     color_map:

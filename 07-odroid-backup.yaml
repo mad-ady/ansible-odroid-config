@@ -17,6 +17,11 @@
       apt:
           name: cpanminus
           state: present
+    - name: Install make
+      become: yes
+      apt: 
+          name: make
+          state: present
           
     - name: Install UI::Dialog
       become: yes
@@ -48,4 +53,10 @@
       become: yes
       apt:
           name: mtd-utils
+          state: present
+    
+    - name: Install dialog
+      become: yes
+      apt: 
+          name: dialog
           state: present
