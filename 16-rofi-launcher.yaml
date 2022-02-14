@@ -1,0 +1,77 @@
+# ansible-playbook -i hosts 16-rofi-launcher.yaml --extra-vars="hosts=xxx"
+
+#prerequisites: http://adrianpopagh.blogspot.com/2020/12/quick-launcher-with-firefox-tabs-rofi.html
+
+- hosts: '{{ hosts }}'
+  become: true
+  vars: 
+    foo: 'bar'
+  tasks: 
+  - name: Install rofi dependencies from apt
+    apt: 
+      pkg: rofi
+      state: build-dep
+  - name: Install some extra dependencies
+    apt:
+      pkg: 
+        - libxcb-cursor-dev
+        - libxcb-cursor0
+
+  - name: Create a temp build directory
+    ansible.builtin.tempfile:
+      state: directory
+      suffix: rofi_build
+    register: rofi_build_dir
+  - name: "Download rofi sources to {{rofi_build_dir['path']}}"
+    git:
+      repo: 'https://github.com/davatorium/rofi'
+      force: yes
+      dest: "{{rofi_build_dir['path']}}"
+  - name: "Build rofi"
+    shell: > 
+      cd {{rofi_build_dir['path']}} && git submodule update --init && autoreconf -i && mkdir build && cd build && ../configure --disable-check && make && make install
+
+  - name: "Delete build dir"
+    file:
+      state: absent
+      path: "{{rofi_build_dir['path']}}"
+
+  - name: Install brotab
+    pip:
+      name: brotab
+  
+  - name: Copy brotab config lua
+    copy:
+      src: files/brotab_modi.lua
+      dest: /home/adrianp/.config/
+      owner: adrianp
+      group: adrianp
+      mode: '0755'
+  
+  - name: Install lua
+    apt:
+      pkg: 
+        - lua5.3 
+        - liblua5.3-dev 
+        - luarocks
+  
+  - name: Install lua-shepi
+    shell: luarocks install lua-shepi
+
+  - name: Make rofi config dir
+    ansible.builtin.file:
+      path: /home/adrianp/.config/rofi
+      state: directory
+      mode: '0755'
+  
+  - name: Write rofi configuration
+    copy:
+      src: files/config.rasi
+      dest: /home/adrianp/.config/rofi
+      owner: adrianp
+      group: adrianp
+      mode: '0644'
+
+  - name: "Don't forget to run brotab install as the user"
+    debug: 
+      msg: "Don't forget to run brotab install as the user"

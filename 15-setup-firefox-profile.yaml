@@ -1,0 +1,51 @@
+# ansible-playbook -i hosts 15-setup-firefox-profile.yaml --extra-vars="hosts=xxx"
+
+- hosts: '{{ hosts }}'
+  vars: 
+    profile_dir_name: 'hmxmne3pffprofile.default'
+  tasks:
+  - name: Ensure ~/.mozilla exists
+    ansible.builtin.file:
+      path: /home/adrianp/.mozilla
+      state: directory
+      mode: '0755'
+  - name: Ensure ~/.mozilla/firefox exists
+    ansible.builtin.file:
+      path: /home/adrianp/.mozilla/firefox
+      state: directory
+      mode: '0755'
+  - name: Ensure ~/.mozilla/firefox/profiles.ini exists
+    ansible.builtin.file:
+      path: /home/adrianp/.mozilla/firefox/profiles.ini
+      state: touch
+      mode: '0755'
+  - name: Ensure ~/.mozilla/firefox/profiles.ini contains a link to my profile
+    blockinfile:
+      path: /home/adrianp/.mozilla/firefox/profiles.ini
+      block: |
+        [Profile0]
+        Name=default
+        IsRelative=1
+        Path={{profile_dir_name}}
+        Default=1
+
+        [General]
+        StartWithLastProfile=1
+        Version=2
+  - name: Create profile directory
+    ansible.builtin.file:
+      path: "/home/adrianp/.mozilla/firefox/{{profile_dir_name}}"
+      state: directory
+      mode: '0755'
+  - name: Unpack firefox_profile.zip
+    ansible.builtin.unarchive:
+      src: files/firefox_profile.zip
+      dest: "/home/adrianp/.mozilla/firefox/{{profile_dir_name}}/"
+  - name: Set permissions to adrianp:adrianp
+    file: 
+      dest: "/home/adrianp/.mozilla"
+      owner: adrianp 
+      group: adrianp 
+      recurse: yes
+
+  

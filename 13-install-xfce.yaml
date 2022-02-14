@@ -1,0 +1,114 @@
+# ansible-playbook -i hosts 13-install-xfce.yaml --extra-vars="hosts=xxx"
+- hosts: '{{ hosts }}'
+  tasks:
+  - name: Install xfce packages
+    become: yes
+    apt: 
+      name: 
+        - dmz-cursor-theme
+        - doc-base
+        - elementary-xfce-icon-theme
+        - exo-utils
+        - fonts-noto-core
+        - fonts-noto-hinted
+        - fonts-noto-ui-core
+        - greybird-gtk-theme
+        - libexo-2-0
+        - libexo-common
+        - libexo-helpers
+        - libgarcon-1-0
+        - libgarcon-common
+        - libgarcon-gtk3-1-0
+        - libthunarx-3-0
+        - libtumbler-1-0
+        - libuuid-perl
+        - libxfce4panel-2.0-4
+        - libxfce4ui-1-0
+        - libxfce4ui-2-0
+        - libxfce4ui-common
+        - libxfce4util-common
+        - libxfce4util7
+        - libxfconf-0-3
+        - libyaml-tiny-perl
+        - lightdm-gtk-greeter
+        - numix-gtk-theme
+        - plymouth-theme-xubuntu-logo
+        - plymouth-theme-xubuntu-text
+        - shimmer-themes
+        - thunar
+        - thunar-data
+        - thunar-volman
+        - tumbler
+        - tumbler-common
+        - xfce4-appfinder
+        - xfce4-notifyd
+        - xfce4-panel
+        - xfce4-session
+        - xfce4-settings
+        - xfconf
+        - xfdesktop4
+        - xfdesktop4-data
+        - xfwm4
+        - xubuntu-artwork
+        - xubuntu-core
+        - xubuntu-default-settings
+        - xubuntu-wallpapers
+        # recommended packages
+        - thunar-archive-plugin
+        - thunar-media-tags-plugin
+        - xcursor-themes
+        - xfce4-cpugraph-plugin
+        - xfce4-dict
+        - xfce4-mailwatch-plugin
+        - xfce4-netload-plugin
+        - xfce4-notes-plugin
+        - xfce4-places-plugin
+        - xfce4-systemload-plugin
+        - xfce4-taskmanager
+        - xfce4-verve-plugin
+        - xfce4-weather-plugin
+        - xfce4-xkb-plugin
+        - xfpanel-switch
+        - numlockx 
+        - pavucontrol
+        - xfce4-indicator-plugin 
+        - xfce4-power-manager 
+        - xfce4-pulseaudio-plugin
+        - xfce4-screensaver 
+        - xfce4-screenshooter 
+        - xfce4-statusnotifier-plugin
+        - xfce4-terminal 
+        - xfce4-whiskermenu-plugin 
+        - mousepad
+        - pastebinit
+        - nautilus
+  - name: Ensure /home/adrianp/.local/ exists
+    ansible.builtin.file:
+      path: /home/adrianp/.local
+      state: directory
+      mode: '0755'
+  - name: Ensure /home/adrianp/.local/share/ exists
+    ansible.builtin.file:
+      path: /home/adrianp/.local/share/
+      state: directory
+      mode: '0755'
+  - name: /home/adrianp/.local/share/xfce4-panel-profiles/ exists
+    ansible.builtin.file:
+      path: /home/adrianp/.local/share/xfce4-panel-profiles/
+      state: directory
+      mode: '0755'
+  - name: Copy panel1screen.tar.bz2 to /home/adrianp/.local/share/xfce4-panel-profiles/
+    copy:
+      src: files/panel1screen.tar.bz2
+      dest: /home/adrianp/.local/share/xfce4-panel-profiles/
+      owner: adrianp
+      group: adrianp
+      mode: '0644'
+  - name: Copy panel2screens.tar.bz2 to /home/adrianp/.local/share/xfce4-panel-profiles/
+    copy:
+      src: files/panel2screens.tar.bz2
+      dest: /home/adrianp/.local/share/xfce4-panel-profiles/
+      owner: adrianp
+      group: adrianp
+      mode: '0644'
+
