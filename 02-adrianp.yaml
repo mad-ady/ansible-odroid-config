@@ -108,4 +108,13 @@
         - /home/adrianp/.ssh/id_rsa_frost.pub
         - /home/adrianp/.ssh/id_rsa_2020.pub
 
+    - name: Copy ~adrianp/.bash_aliases
+      become: yes
+      copy:
+        src: /home/adrianp/.bash_aliases
+        dest: /home/adrianp/
+        owner: adrianp
+        group: adrianp
+        mode: '0644'
+
     
