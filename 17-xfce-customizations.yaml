@@ -1,0 +1,77 @@
+# ansible-playbook -i hosts 17-xfce-customizations.yaml --extra-vars="hosts=xxx"
+- hosts: '{{ hosts }}'
+  become: yes
+  vars:
+    conf_dir: "/home/adrianp/.config/xfce4"
+    username: "adrianp"
+    group: "adrianp"
+  tasks:
+  - name: "Ensure {{conf_dir}} exists"
+    file:
+      path: "{{conf_dir}}"
+      state: directory
+      owner: "{{username}}"
+      group: "{{group}}"
+  
+  - name: "Ensure {{conf_dir}}/terminal exists"
+    file:
+      path: "{{conf_dir}}/terminal"
+      state: directory
+      owner: "{{username}}"
+      group: "{{group}}"
+  
+  - name: "Copy local terminalrc"
+    copy:
+      src: "{{conf_dir}}/terminal/terminalrc"
+      dest: "{{conf_dir}}/terminal/terminalrc"
+      owner: "{{username}}"
+      group: "{{group}}"
+  
+  - name: "Ensure {{conf_dir}}/xfconf/xfce-perchannel-xml/ exists"
+    file:
+      path: "{{conf_dir}}/xfconf/xfce-perchannel-xml"
+      state: directory
+      owner: "{{username}}"
+      group: "{{group}}"
+  - name: "Copy local keyboard-layout.xml"
+    copy:
+      src: "{{conf_dir}}/xfconf/xfce-perchannel-xml/keyboard-layout.xml"
+      dest: "{{conf_dir}}/xfconf/xfce-perchannel-xml/keyboard-layout.xml"
+      owner: "{{username}}"
+      group: "{{group}}"
+  - name: "Copy local keyboards.xml"
+    copy:
+      src: "{{conf_dir}}/xfconf/xfce-perchannel-xml/keyboards.xml"
+      dest: "{{conf_dir}}/xfconf/xfce-perchannel-xml/keyboards.xml"
+      owner: "{{username}}"
+      group: "{{group}}"
+  - name: "Copy local xfce4-keyboard-shortcuts.xml"
+    copy:
+      src: "{{conf_dir}}/xfconf/xfce-perchannel-xml/xfce4-keyboard-shortcuts.xml"
+      dest: "{{conf_dir}}/xfconf/xfce-perchannel-xml/xfce4-keyboard-shortcuts.xml"
+      owner: "{{username}}"
+      group: "{{group}}"
+  - name: "Copy local xfce4-notifyd.xml"
+    copy:
+      src: "{{conf_dir}}/xfconf/xfce-perchannel-xml/xfce4-notifyd.xml"
+      dest: "{{conf_dir}}/xfconf/xfce-perchannel-xml/xfce4-notifyd.xml"
+      owner: "{{username}}"
+      group: "{{group}}"
+  - name: "Copy local mouse cursors (~/.icons)"
+    copy:
+      src: "/home/adrianp/.icons"
+      dest: "/home/adrianp/"
+      owner: "{{username}}"
+      group: "{{group}}"
+  - name: "Copy local themes (~/.themes)"
+    copy:
+      src: "/home/adrianp/.themes"
+      dest: "/home/adrianp/"
+      owner: "{{username}}"
+      group: "{{group}}"
+  
+
+  
+  
+
+  
