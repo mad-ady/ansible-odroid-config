@@ -1,0 +1,55 @@
+# depends on https://github.com/mad-ady/ansible-role-borgbackup
+# sudo ansible-galaxy install --roles-path /etc/ansible/roles/ git+https://github.com/mad-ady/ansible-role-borgbackup
+
+# example usage:
+# ansible-playbook deploy-borg-backup.yaml -i hosts
+
+- hosts: 'hosts_to_backup'
+  become: yes
+
+  #execute before the role
+  pre_tasks:
+    - name: 'Ensure group {{item.user}} exists'
+      become: yes
+      group:
+        name: '{{item.user}}'
+        state: present
+      delegate_to: "{{item.shortname}}"
+      loop: "{{borgbackup_servers}}"
+    - name: 'Add the user {{ item.user }} with a bash shell'
+      become: yes
+      user:
+        name: '{{ item.user }}'
+        shell: '{{bashpath}}'
+        create_home: yes
+        group: '{{ item.user }}'
+        home: '{{ item.home }}'
+      delegate_to: "{{item.shortname}}"
+      loop: "{{borgbackup_servers}}"
+    - name: 'Create repository directories'
+      become: yes
+      ansible.builtin.file:
+        path: "{{item.home}}/{{item.pool}}"
+        state: directory
+        recurse: yes
+        owner: "{{ item.user }}"
+        group: "{{ item.user }}"
+      delegate_to: "{{item.shortname}}"
+      loop: "{{borgbackup_servers}}"
+    - name: "Make sure /bin/nice exists (on Ubuntu it's /usr/bin/nice)"
+      stat:
+        path: /bin/nice
+      register: bin_nice_stat
+    - name: "Create a symlink from /usr/bin/nice to /bin/nice"
+      file:
+        src: /usr/bin/nice
+        dest: /bin/nice
+        state: link
+      when: bin_nice_stat.stat.exists == False
+
+    - name: Set the correct bash path, in case it's nonstandard
+      set_fact:
+        borgbackup_shell: "{{bashpath}}"
+
+  roles:
+    - role: ansible-role-borgbackup
