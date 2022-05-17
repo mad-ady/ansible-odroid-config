@@ -79,6 +79,22 @@
         name: "check log status"
         minute: "*/5"
         job: "/usr/local/bin/log-counter-prometheus.sh 2>/dev/null | sponge /var/log/prometheus/log-status.prom"
+    
+    - name: Measure disk spin status via smartctl
+      become: true
+      copy:
+        src: files/node-disk-spin-status.sh
+        dest: /usr/local/bin/node-disk-spin-status.sh
+        owner: root
+        group: root
+        mode: '0755'
+
+    - name: Export disk spin status via cron to prometheus
+      become: true
+      ansible.builtin.cron:
+        name: "check disk spin status"
+        minute: "*/5"
+        job: "/usr/local/bin/node-disk-spin-status.sh 2>/dev/null | sponge /var/log/prometheus/disk-spin-status.prom"
           
 
   roles:
