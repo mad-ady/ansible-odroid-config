@@ -21,7 +21,7 @@
     - name: Install python2
       become: yes
       apt:
-        name: python
+        name: python2
 
     - name: Install git
       become: yes

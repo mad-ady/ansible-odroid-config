@@ -5,40 +5,13 @@
     become: yes
     apt: 
       name: 
+        - xfce4
         - dmz-cursor-theme
-        - doc-base
         - elementary-xfce-icon-theme
-        - exo-utils
         - fonts-noto-core
         - fonts-noto-hinted
         - fonts-noto-ui-core
         - greybird-gtk-theme
-        - libexo-2-0
-        - libexo-common
-        - libgarcon-1-0
-        - libgarcon-common
-        - libgarcon-gtk3-1-0
-        - libthunarx-3-0
-        - libtumbler-1-0
-        - libuuid-perl
-        - libxfce4panel-2.0-4
-        - libxfce4ui-1-0
-        - libxfce4ui-2-0
-        - libxfce4ui-common
-        - libxfce4util-common
-        - libxfce4util7
-        - libxfconf-0-3
-        - libyaml-tiny-perl
-        - lightdm-gtk-greeter
-        - numix-gtk-theme
-        - plymouth-theme-xubuntu-logo
-        - plymouth-theme-xubuntu-text
-        - shimmer-themes
-        - thunar
-        - thunar-data
-        - thunar-volman
-        - tumbler
-        - tumbler-common
         - xfce4-appfinder
         - xfce4-notifyd
         - xfce4-panel
@@ -81,6 +54,8 @@
         - mousepad
         - pastebinit
         - nautilus
+        - xfce4-goodies
+      install_recommends: no
   - name: Ensure /home/adrianp/.local/ exists
     ansible.builtin.file:
       path: /home/adrianp/.local

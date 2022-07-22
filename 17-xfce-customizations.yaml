@@ -57,19 +57,57 @@
       dest: "{{conf_dir}}/xfconf/xfce-perchannel-xml/xfce4-notifyd.xml"
       owner: "{{username}}"
       group: "{{group}}"
-  - name: "Copy local mouse cursors (~/.icons)"
+  - name: "Tar local cursors (~/.icons) before transfer"
+    archive:
+      path: "/home/adrianp/.icons"
+      dest: "/tmp/adrianp-icons.tgz"
+    delegate_to: "localhost"
+
+  - name: "Transfer /tmp/adrianp-icons.tgz"
     copy:
-      src: "/home/adrianp/.icons"
+      src: "/tmp/adrianp-icons.tgz"
       dest: "/home/adrianp/"
       owner: "{{username}}"
       group: "{{group}}"
-  - name: "Copy local themes (~/.themes)"
+
+  - name: "Ensure .icons exists"
+    file:
+      path: "/home/{{username}}/.icons"
+      state: directory
+      owner: "{{username}}"
+      group: "{{group}}"
+
+  - name: "Unarchive /home/adrianp/adrianp-icons.tgz"
+    unarchive:
+      src: "/home/adrianp/adrianp-icons.tgz"
+      dest: "/home/adrianp"
+      remote_src: yes
+
+  - name: "Tar local themes (~/.themes) before transfer"
+    archive:
+      path: "/home/adrianp/.themes"
+      dest: "/tmp/adrianp-themes.tgz"
+    delegate_to: "localhost"
+
+  - name: "Transfer /tmp/adrianp-themes.tgz"
     copy:
-      src: "/home/adrianp/.themes"
+      src: "/tmp/adrianp-themes.tgz"
       dest: "/home/adrianp/"
       owner: "{{username}}"
       group: "{{group}}"
-  
+
+  - name: "Ensure .themes exists"
+    file:
+      path: "/home/{{username}}/.themes"
+      state: directory
+      owner: "{{username}}"
+      group: "{{group}}"
+
+  - name: "Unarchive /home/adrianp/adrianp-themes.tgz"
+    unarchive:
+      src: "/home/adrianp/adrianp-themes.tgz"
+      dest: "/home/adrianp"
+      remote_src: yes
 
   
   
